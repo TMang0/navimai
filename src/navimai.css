@@ -1,0 +1,892 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.christmas-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  touch-action: none;
+}
+
+/* Asegurar que el Canvas esté en el fondo */
+.christmas-container > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+canvas {
+  display: block;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* ==================== AUDIO CONTROL ==================== */
+
+.audio-control {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  pointer-events: auto;
+}
+
+.audio-control:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.audio-control:active {
+  transform: scale(0.95);
+}
+
+.audio-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+.audio-control:hover .audio-icon {
+  transform: scale(1.1);
+}
+
+/* ==================== MESSAGE OVERLAY ==================== */
+
+.message-overlay {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  padding: 0 20px;
+  max-width: 90vw;
+}
+
+.message-overlay h1 {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  animation: glow 2s ease-in-out infinite alternate;
+  line-height: 1.2;
+}
+
+.message-overlay p {
+  font-size: clamp(0.9rem, 3vw, 1.5rem);
+  margin-top: 10px;
+  font-family: 'Georgia', serif;
+}
+
+.mobile-hint {
+  margin-top: 15px;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.footer-info {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  padding: 0 20px;
+}
+
+.footer-info p {
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  padding: 8px 16px;
+  border-radius: 15px;
+  display: inline-block;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff0000,
+                 0 0 40px #ff0000, 0 0 50px #ff0000;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ffaa00, 0 0 40px #ffaa00,
+                 0 0 50px #ffaa00, 0 0 60px #ffaa00;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================== MODAL STYLES ==================== */
+
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 999999 !important;
+  animation: fadeIn 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 90%;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  animation: slideUp 0.4s ease-out;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  z-index: 1000000;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100px) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  font-size: 2rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  line-height: 1;
+  font-weight: bold;
+  padding: 0;
+  z-index: 1000001;
+}
+
+.modal-close:hover {
+  background: rgba(255, 0, 0, 0.7);
+  transform: rotate(90deg) scale(1.1);
+  border-color: white;
+}
+
+.modal-body {
+  text-align: center;
+  color: white;
+  padding: 1rem;
+}
+
+.modal-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+}
+
+.modal-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  min-height: 200px;
+  border-radius: 15px;
+  margin: 1rem auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  display: block;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-description {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+  font-weight: 500;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ==================== LETTER/CARD MODAL STYLES ==================== */
+
+.letter-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -10%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  z-index: 10;
+}
+
+.letter_ct {
+  width: 400px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.letter_ct label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  width: 400px;
+  height: 300px;
+}
+
+.letter {
+  width: 400px;
+  height: 300px;
+  background-color: pink;
+  border: 4px solid palevioletred;
+  display: grid;
+  transition: all 0.3s ease-in-out;
+  position: absolute;
+  border-radius: 0 0 7px 7px;
+  top: 0;
+  left: 0;
+}
+
+.letter.main {
+  box-shadow: 0 10px 30px rgba(128, 0, 128, 0.5);
+}
+
+.note {
+  z-index: 1;
+  position: absolute;
+  width: 360px;
+  height: 500px;
+  top: 10px;
+  left: 20px;
+  background-color: whitesmoke;
+  padding: 25px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transform: translateY(0px);
+  transition: transform 0.5s ease-in-out;
+  transition-delay: 0s;
+  border-radius: 5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.letter-title {
+  font-size: 1.4rem;
+  color: purple;
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow: none;
+  font-weight: bold;
+}
+
+.letter-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 10px;
+  margin: 10px auto 15px;
+  display: block;
+  border: 3px solid purple;
+  box-shadow: 0 5px 15px rgba(128, 0, 128, 0.3);
+}
+
+.letter-message {
+  font-size: 0.9rem;
+  color: purple;
+  text-align: justify;
+  margin: 15px 0;
+  line-height: 1.7;
+  text-shadow: none;
+}
+
+.sign {
+  text-align: right;
+  font-size: 1rem;
+  color: purple;
+  margin-top: 20px;
+  font-style: italic;
+  text-shadow: none;
+}
+
+.front {
+  position: absolute;
+  z-index: 2;
+  width: 401px;
+  height: 300px;
+  background-color: rgb(252, 157, 188);
+  top: 4px;
+  left: 4px;
+  clip-path: polygon(50% 45%, 100% 0, 100% 100%, 0 100%, 0 0);
+}
+
+.flap-bg {
+  z-index: 3;
+  background-color: palevioletred;
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 400px;
+  height: 300px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 1%, 50% 56%, 0 1%);
+  transform: rotateX(0deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+  transform-origin: top;
+}
+
+.flap {
+  z-index: 4;
+  background-color: rgb(255, 163, 179);
+  border: unset;
+  position: absolute;
+  top: 0;
+  left: 3px;
+  width: 400px;
+  height: 300px;
+  clip-path: polygon(0 0, 100% 0, 50% 55%);
+  transform: rotateX(0deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+  transform-origin: top;
+}
+
+.heart {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  height: 170px;
+  width: 200px;
+  scale: 30%;
+  top: 70px;
+  left: 102px;
+  transition: transform 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 160px;
+  background-color: rgb(178, 34, 106);
+}
+
+.heart::before {
+  left: 100px;
+  transform-origin: 0 100%;
+  transform: rotate(-45deg);
+  border-radius: 50px 50px 0 0;
+}
+
+.heart::after {
+  right: 100px;
+  transform-origin: 100% 100%;
+  transform: rotate(45deg);
+  border-radius: 50px 50px 0 0;
+}
+
+#letter-check {
+  display: none;
+}
+
+/* Estado CERRADO (default) */
+input:not(:checked) ~ label .flap {
+  transform-origin: top;
+  transform: rotateX(0deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+}
+
+input:not(:checked) ~ label .flap-bg {
+  transform-origin: top;
+  transform: rotateX(0deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+}
+
+input:not(:checked) ~ label .heart {
+  transform-origin: center 70%;
+  transform: translateY(0px) rotate(0deg);
+  transition: transform 0.3s ease-in-out;
+  transition-delay: 0.6s;
+}
+
+input:not(:checked) ~ label .note {
+  transform: translateY(0px);
+  opacity: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.2s;
+  transition-delay: 0s;
+}
+
+/* Estado ABIERTO */
+input:checked ~ label .flap {
+  transform-origin: top;
+  transform: rotateX(-180deg) translateY(-4px);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+  z-index: 0;
+}
+
+input:checked ~ label .flap-bg {
+  transform-origin: top;
+  transform: rotateX(-180deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.2s;
+  z-index: 0;
+}
+
+input:checked ~ label .heart {
+  transform-origin: center 70%;
+  transform: translateX(-70px) rotate(-70deg);
+  transition: transform 0.4s ease-in-out;
+  transition-delay: 0.1s;
+}
+
+input:checked ~ label .note {
+  transform: translateY(-350px);
+  opacity: 1;
+  pointer-events: auto;
+  transition: transform 0.5s ease-in-out, opacity 0.3s;
+  transition-delay: 0.6s;
+}
+
+.txt {
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.txt h3 {
+  font-size: 1.3rem;
+  color: burlywood;
+  text-shadow: 0 0 8px peru;
+  font-weight: normal;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.note::-webkit-scrollbar {
+  width: 8px;
+}
+
+.note::-webkit-scrollbar-track {
+  background: rgba(128, 0, 128, 0.1);
+  border-radius: 10px;
+}
+
+.note::-webkit-scrollbar-thumb {
+  background: rgba(128, 0, 128, 0.4);
+  border-radius: 10px;
+}
+
+.note::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 0, 128, 0.6);
+}
+
+/* ==================== MEDIA QUERIES ==================== */
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .message-overlay {
+    top: 10px;
+  }
+  
+  .footer-info {
+    bottom: 10px;
+  }
+
+  .audio-control {
+    top: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+  }
+
+  .audio-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+    max-height: 85vh;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .modal-description {
+    font-size: 1rem;
+  }
+
+  .modal-image {
+    max-width: 100%;
+  }
+  
+  .modal-close {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+
+  /* Letter responsive */
+  .letter-container {
+    transform: translate(-50%, -45%);
+  }
+
+  .letter_ct {
+    width: 350px;
+    height: 260px;
+  }
+
+  .letter_ct label {
+    width: 350px;
+    height: 260px;
+  }
+
+  .letter {
+    width: 350px;
+    height: 260px;
+  }
+
+  .note {
+    width: 320px;
+    height: 420px;
+    padding: 20px;
+    left: 15px;
+  }
+
+  .front {
+    width: 351px;
+    height: 260px;
+  }
+
+  .flap-bg,
+  .flap {
+    width: 350px;
+    height: 260px;
+  }
+
+  .letter-title {
+    font-size: 1.2rem;
+  }
+
+  .letter-message {
+    font-size: 0.85rem;
+  }
+
+  .letter-image {
+    max-width: 260px;
+  }
+
+  .heart {
+    top: 60px;
+    left: 88px;
+  }
+
+  input:checked ~ label .note {
+    transform: translateY(-300px);
+  }
+
+  .txt h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-overlay {
+    top: 10px;
+  }
+  
+  .message-overlay h1 {
+    font-size: 1.5rem;
+  }
+  
+  .message-overlay p {
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+  
+  .mobile-hint {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    margin-top: 10px;
+  }
+
+  .audio-control {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .audio-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+
+  .modal-description {
+    font-size: 0.9rem;
+  }
+
+  .modal-close {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+
+  /* Letter responsive */
+  .letter-container {
+    transform: translate(-50%, -45%);
+  }
+
+  .letter_ct {
+    width: 300px;
+    height: 220px;
+  }
+
+  .letter_ct label {
+    width: 300px;
+    height: 220px;
+  }
+
+  .letter {
+    width: 300px;
+    height: 220px;
+  }
+
+  .note {
+    width: 280px;
+    height: 380px;
+    padding: 15px;
+    left: 10px;
+  }
+
+  .front {
+    width: 301px;
+    height: 220px;
+  }
+
+  .flap-bg,
+  .flap {
+    width: 300px;
+    height: 220px;
+  }
+
+  .letter-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .letter-message {
+    font-size: 0.8rem;
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+
+  .letter-image {
+    max-width: 220px;
+    margin: 8px auto 12px;
+  }
+
+  .sign {
+    font-size: 0.9rem;
+    margin-top: 15px;
+  }
+
+  .heart {
+    top: 50px;
+    left: 70px;
+    scale: 25%;
+  }
+
+  .txt h3 {
+    font-size: 1rem;
+  }
+
+  input:checked ~ label .note {
+    transform: translateY(-260px);
+  }
+}
+
+@media (max-width: 380px) {
+  .letter-container {
+    transform: translate(-50%, -45%);
+  }
+
+  .letter_ct {
+    width: 280px;
+    height: 200px;
+  }
+
+  .letter_ct label {
+    width: 280px;
+    height: 200px;
+  }
+
+  .letter {
+    width: 280px;
+    height: 200px;
+  }
+
+  .note {
+    width: 260px;
+    height: 350px;
+    padding: 12px;
+    left: 10px;
+  }
+
+  .front {
+    width: 281px;
+    height: 200px;
+  }
+
+  .flap-bg,
+  .flap {
+    width: 280px;
+    height: 200px;
+  }
+
+  .letter-title {
+    font-size: 1rem;
+  }
+
+  .letter-message {
+    font-size: 0.75rem;
+  }
+
+  .letter-image {
+    max-width: 200px;
+  }
+
+  .heart {
+    top: 45px;
+    left: 65px;
+    scale: 22%;
+  }
+
+  input:checked ~ label .note {
+    transform: translateY(-240px);
+  }
+
+  .txt h3 {
+    font-size: 0.9rem;
+  }
+}
