@@ -1,7 +1,7 @@
 {
   "name": "navimai",
   "version": "0.1.0",
-  "homepage": "https://tmang0.github.io/navimai",
+  "homepage": "https://tmang0.github.io/navimai/",
   "private": true,
   "dependencies": {
     "@react-three/drei": "^10.7.7",
