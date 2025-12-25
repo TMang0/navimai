@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/navimai/static/css/main.c8502473.css",
+    "main.js": "/navimai/static/js/main.e3636390.js",
+    "static/js/453.6fb4edf6.chunk.js": "/navimai/static/js/453.6fb4edf6.chunk.js",
+    "index.html": "/navimai/index.html",
+    "main.c8502473.css.map": "/navimai/static/css/main.c8502473.css.map",
+    "main.e3636390.js.map": "/navimai/static/js/main.e3636390.js.map",
+    "453.6fb4edf6.chunk.js.map": "/navimai/static/js/453.6fb4edf6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c8502473.css",
+    "static/js/main.e3636390.js"
+  ]
+}
