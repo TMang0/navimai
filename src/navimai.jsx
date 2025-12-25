@@ -294,11 +294,13 @@ const GiftBoxModel = ({
   onClick = null,
   giftId = ''
 }) => {
-  const fbx = useLoader(FBXLoader, process.env.PUBLIC_URL + '/models/gift_box_V03.fbx');
-  const meshRef = useRef();
   const groupRef = useRef();
   const [hovered, setHovered] = useState(false);
 
+  // Cargar el modelo FBX
+  const fbx = useLoader(FBXLoader, process.env.PUBLIC_URL + '/models/gift_box_V03.fbx');
+  
+  // Cargar las texturas PNG
   const [diffuseMap, metalnessMap, roughnessMap] = useLoader(
     THREE.TextureLoader,
     [
@@ -308,8 +310,12 @@ const GiftBoxModel = ({
     ]
   );
 
-  const material = useMemo(() => {
-    return new THREE.MeshStandardMaterial({
+  // Crear el modelo clonado con nuestras texturas
+  const clonedFbx = useMemo(() => {
+    const cloned = fbx.clone();
+    
+    // Crear material con nuestras texturas PNG
+    const material = new THREE.MeshStandardMaterial({
       map: diffuseMap,
       metalnessMap: metalnessMap,
       roughnessMap: roughnessMap,
@@ -317,22 +323,22 @@ const GiftBoxModel = ({
       roughness: 0.7,
       color: colorTint || 0xffffff,
     });
-  }, [diffuseMap, metalnessMap, roughnessMap, colorTint]);
-
-  const clonedFbx = useMemo(() => {
-    const cloned = fbx.clone();
     
+    // Aplicar el material a todos los meshes del modelo
     cloned.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
+        // Reemplazar el material del FBX con el nuestro
         child.material = material.clone();
-        child.material.color.set(colorTint || 0xffffff);
+        if (colorTint) {
+          child.material.color.set(colorTint);
+        }
       }
     });
     
     return cloned;
-  }, [fbx, material, colorTint]);
+  }, [fbx, diffuseMap, metalnessMap, roughnessMap, colorTint]);
 
   useFrame((state) => {
     if (groupRef.current && hovered) {
@@ -372,7 +378,6 @@ const GiftBoxModel = ({
       onPointerOut={handlePointerOut}
     >
       <primitive 
-        ref={meshRef}
         object={clonedFbx} 
         scale={scale}
       />
