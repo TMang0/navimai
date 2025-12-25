@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/navimai/static/css/main.c8502473.css",
-    "main.js": "/navimai/static/js/main.5b3d81c1.js",
+    "main.js": "/navimai/static/js/main.8cc3e44b.js",
     "static/js/453.6fb4edf6.chunk.js": "/navimai/static/js/453.6fb4edf6.chunk.js",
     "index.html": "/navimai/index.html",
     "main.c8502473.css.map": "/navimai/static/css/main.c8502473.css.map",
-    "main.5b3d81c1.js.map": "/navimai/static/js/main.5b3d81c1.js.map",
+    "main.8cc3e44b.js.map": "/navimai/static/js/main.8cc3e44b.js.map",
     "453.6fb4edf6.chunk.js.map": "/navimai/static/js/453.6fb4edf6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c8502473.css",
-    "static/js/main.5b3d81c1.js"
+    "static/js/main.8cc3e44b.js"
   ]
 }
