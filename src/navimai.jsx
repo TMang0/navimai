@@ -496,7 +496,6 @@ const Navimai = () => {
         },
         gift5: {
             title: "💌 Una carta especial para ti 💌",
-            image: process.env.PUBLIC_URL + "/images/gift5.png",
             description: "Mai, desde el primer día supe que eras especial. Cada momento contigo es un regalo que atesoro en mi corazón. Gracias por llenar mis días de color azul, el color de nuestro amor. Eres mi alegría, mi inspiración, mi todo. Esta Navidad y siempre, mi corazón es tuyo. Te amo con todo mi ser 💙✨"
         }
     };
