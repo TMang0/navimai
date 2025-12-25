@@ -286,27 +286,98 @@ const CustomTreeModel = ({ scale = 1, position = [0, 0, 0] }) => {
     );
 };
 
-const GiftBoxModel = ({
-    position = [0, 0, 0],
-    scale = 1,
-    rotation = [0, 0, 0],
-    colorTint = null,
-    onClick = null,
-    giftId = ''
+const GiftBoxModel = ({ 
+  position = [0, 0, 0], 
+  scale = 1, 
+  rotation = [0, 0, 0],
+  colorTint = null,
+  onClick = null,
+  giftId = ''
 }) => {
-    const fbx = useLoader(FBXLoader, process.env.PUBLIC_URL + '/models/gift_box_V03.fbx');
-    const meshRef = useRef();
-    const groupRef = useRef();
-    const [hovered, setHovered] = useState(false);
+  const fbx = useLoader(FBXLoader, process.env.PUBLIC_URL + '/models/gift_box_V03.fbx');
+  const meshRef = useRef();
+  const groupRef = useRef();
+  const [hovered, setHovered] = useState(false);
 
-    const [diffuseMap, metalnessMap, roughnessMap] = useLoader(
-        THREE.TextureLoader,
-        [
-            process.env.PUBLIC_URL + '/models/gift_box_diffuse.png',
-            process.env.PUBLIC_URL + '/models/gift_box_metal.png',
-            process.env.PUBLIC_URL + '/models/gift_box_roughress.png'
-        ]
-    );
+  const [diffuseMap, metalnessMap, roughnessMap] = useLoader(
+    THREE.TextureLoader,
+    [
+      process.env.PUBLIC_URL + '/models/gift_box_diffuse.png',
+      process.env.PUBLIC_URL + '/models/gift_box_metal.png',
+      process.env.PUBLIC_URL + '/models/gift_box_roughress.png'
+    ]
+  );
+
+  const material = useMemo(() => {
+    return new THREE.MeshStandardMaterial({
+      map: diffuseMap,
+      metalnessMap: metalnessMap,
+      roughnessMap: roughnessMap,
+      metalness: 0.5,
+      roughness: 0.7,
+      color: colorTint || 0xffffff,
+    });
+  }, [diffuseMap, metalnessMap, roughnessMap, colorTint]);
+
+  const clonedFbx = useMemo(() => {
+    const cloned = fbx.clone();
+    
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.material = material.clone();
+        child.material.color.set(colorTint || 0xffffff);
+      }
+    });
+    
+    return cloned;
+  }, [fbx, material, colorTint]);
+
+  useFrame((state) => {
+    if (groupRef.current && hovered) {
+      groupRef.current.position.y += Math.sin(state.clock.elapsedTime * 3) * 0.002;
+      groupRef.current.rotation.y += 0.01;
+    }
+  });
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  const handlePointerOver = (e) => {
+    e.stopPropagation();
+    setHovered(true);
+    if (onClick) {
+      document.body.style.cursor = 'pointer';
+    }
+  };
+
+  const handlePointerOut = (e) => {
+    e.stopPropagation();
+    setHovered(false);
+    document.body.style.cursor = 'default';
+  };
+
+  return (
+    <group 
+      ref={groupRef}
+      position={position}
+      rotation={rotation}
+      onClick={handleClick}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <primitive 
+        ref={meshRef}
+        object={clonedFbx} 
+        scale={scale}
+      />
+    </group>
+  );
 };
 
 const GiftsFBX = ({ scale = 1, onGiftClick }) => {
